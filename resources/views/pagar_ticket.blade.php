@@ -1,13 +1,16 @@
 <?php
-
-function calcularTarifa($horas)
+function calcularTarifa(DateInterval $diff)
 {
-    if ($horas >= 5) {
-        //Valor da diária R$ 50,00
-        return (intdiv($horas, 24) || 1) * 50;
+    $diaria = 50;
+    $hora = 10;
+
+    if($diff->d >= 1){
+        return( $diff->d + 1) * $diaria;
+    }else if($diff->h >= 5){
+        return $diaria;
     }
 
-    return ($horas + 1) * 10;
+    return ($diff->h + 1) * 10;
 }
 
 $input_style = "border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm";
@@ -17,6 +20,8 @@ if (isset($ticket)) {
 } else {
     $header = "Buscar Ticket";
 }
+
+
 ?>
 <x-app-layout header={{$header}}>
     @if(isset($ticket))
@@ -29,7 +34,7 @@ if (isset($ticket)) {
     $dataSaida = $data_atual->format('d/m/Y');
     $horaSaida = $data_atual->format('H:i');
 
-    $valor_total = calcularTarifa($data->diff($data_atual)->h);
+    $valor_total = calcularTarifa($data->diff($data_atual));
     ?>
     <form method="post" action="{{route('pay')}}">
         @csrf
